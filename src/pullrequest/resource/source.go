@@ -7,6 +7,7 @@ type Source struct {
 	Repo        string `json:"repo"`
 	Owner       string `json:"owner"`
 	APIURL      string `json:"api_endpoint"`
+	Context     string `json:"context"`
 }
 
 // Version is
@@ -60,8 +61,9 @@ func NewInRequest() InRequest {
 
 // OutParams is
 type OutParams struct {
-	Status string `json:"status"`
-	Path   string `json:"path"`
+	Status  string `json:"status"`
+	Path    string `json:"path"`
+	Context string `json:"context"`
 }
 
 // OutRequest is

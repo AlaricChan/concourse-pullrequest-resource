@@ -44,7 +44,7 @@ type Pull struct {
 type Github interface {
 	ListPRs() ([]*Pull, error)
 	DownloadPR(string, int) error
-	UpdatePR(string, string, string) (string, error)
+	UpdatePR(string, string, string, string) (string, error)
 }
 
 // GithubClient is
@@ -182,7 +182,7 @@ func (gc *GithubClient) GetPR(number int) (*Pull, error) {
 }
 
 // UpdatePR is
-func (gc *GithubClient) UpdatePR(sourceDir, status, repoPath string) (string, error) {
+func (gc *GithubClient) UpdatePR(sourceDir, status, repoPath, contextParam string) (string, error) {
 	switch status {
 	case
 		"error",
@@ -193,10 +193,16 @@ func (gc *GithubClient) UpdatePR(sourceDir, status, repoPath string) (string, er
 	default:
 		return "", fmt.Errorf("%s is not a valid status", status)
 	}
+	atcExternalURL := fmt.Sprintf("%s/teams/%s/pipelines/%s/jobs/%s/builds/%s", os.Getenv("ATC_EXTERNAL_URL"),
+		os.Getenv("BUILD_TEAM_NAME"), os.Getenv("BUILD_PIPELINE_NAME"), os.Getenv("BUILD_JOB_NAME"), os.Getenv("BUILD_NAME"))
+	if len(contextParam) == 0 {
+		contextParam = githubCheckContext
+	}
 	repoStatus := &github.RepoStatus{
-		State:   &status,
-		Context: &githubCheckContext,
-		Creator: &github.User{},
+		State:     &status,
+		Context:   &contextParam,
+		Creator:   &github.User{},
+		TargetURL: &atcExternalURL,
 	}
 
 	commitHashBytes, err := ioutil.ReadFile(path.Join(sourceDir, repoPath, "pr_last_commit_hash"))

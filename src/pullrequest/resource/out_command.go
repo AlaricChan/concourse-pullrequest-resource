@@ -25,7 +25,7 @@ func (oc *OutCommand) Run(sourceDir string, req OutRequest) (OutResponse, error)
 		return OutResponse{}, fmt.Errorf("reading pr_number: %+v", err)
 	}
 
-	ref, err := oc.github.UpdatePR(sourceDir, params.Status, params.Path)
+	ref, err := oc.github.UpdatePR(sourceDir, params.Status, params.Path, params.Context)
 	if err != nil {
 		return OutResponse{}, fmt.Errorf("updating pr: %+v", err)
 	}
